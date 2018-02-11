@@ -44,6 +44,13 @@ class AccountsTestCase(unittest.TestCase):
             self.assertTrue(
                 issubclass(s['session_type'].__class__, (str, bytes,)))
 
+    def test_get_lastlogin(self):
+        username = getpass.getuser()
+        lastlogin = accounts.get_lastlogin(username)
+
+        # Asserts the returned value is a well constructed datetime object.
+        self.assertTrue(issubclass(lastlogin.__class__, datetime))
+
 
 if __name__ == '__main__':
     unittest.main()
