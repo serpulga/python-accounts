@@ -62,6 +62,32 @@ static PyObject * get_sessions(PyObject * mos, PyObject * args)
     return sessions;
 }
 
+static PyObject * get_lastlogin(PyObject * mos, PyObject * args)
+{
+    struct lastlogx * llog = NULL;
+    const char * name;
+    double ts_unix;
+
+    if (!PyArg_ParseTuple(args, "s", &name))
+        return NULL;
+
+    setutxent();
+    llog = getlastlogxbyname(name, llog);
+    if (llog == NULL) {
+        endutxent();
+        return NULL;
+    }
+
+    ts_unix = (double)llog->ll_tv.tv_sec + (double)llog->ll_tv.tv_usec / 1e6;
+    PyObject * timestamp = Py_BuildValue("f", ts_unix);
+    PyObject * ts_args = Py_BuildValue("(O)", timestamp);
+    PyObject * date = PyDateTime_FromTimestamp(ts_args);
+
+    endutxent();
+
+    return date;
+}
+
 PyMODINIT_FUNC PyInit_accounts(void)
 {
     PyObject *m;
@@ -80,6 +106,12 @@ static PyMethodDef AccountsMethods[] = {
         get_sessions,
         METH_VARARGS,
         "Retrieves current sessions."
+    },
+    {
+        "get_lastlogin",
+        get_lastlogin,
+        METH_VARARGS,
+        "Retrieves the last login date time for a given user."
     },
     {NULL, NULL, 0, NULL}
 };

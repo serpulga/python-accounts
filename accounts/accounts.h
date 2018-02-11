@@ -16,6 +16,8 @@
 
 static PyObject * get_accounts(PyObject *, PyObject*);
 
+static PyObject * get_lastlogin(PyObject *, PyObject*);
+
 static struct PyModuleDef accountsmodule;
 
 PyMODINIT_FUNC PyInit_accounts(void);
