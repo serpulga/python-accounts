@@ -23,12 +23,16 @@ static PyObject * get_sessions(PyObject * mos, PyObject * args)
 
         user = PyUnicode_FromString(ut->ut_user);
         PyDict_SetItemString(session, "user", user);
+        Py_DECREF(user);
 
         ts_unix = (double)ut->ut_tv.tv_sec + (double)ut->ut_tv.tv_usec / 1e6;
         timestamp = Py_BuildValue("f", ts_unix);
         ts_args = Py_BuildValue("(O)", timestamp);
         date = PyDateTime_FromTimestamp(ts_args);
         PyDict_SetItemString(session, "date_created", date);
+        Py_DECREF(timestamp);
+        Py_DECREF(ts_args);
+        Py_DECREF(date);
 
         session_type = (ut->ut_type == EMPTY) ?         "EMPTY" :
                        (ut->ut_type == RUN_LVL) ?       "RUN_LVL" :
@@ -41,20 +45,26 @@ static PyObject * get_sessions(PyObject * mos, PyObject * args)
                        (ut->ut_type == DEAD_PROCESS) ?  "DEAD_PR" : "???";
         type = PyUnicode_FromString(session_type);
         PyDict_SetItemString(session, "session_type", type);
+        Py_DECREF(type);
 
         pid = Py_BuildValue("l", ut->ut_pid);
         PyDict_SetItemString(session, "pid", pid);
+        Py_DECREF(pid);
 
         host = PyUnicode_FromString(ut->ut_host);
         PyDict_SetItemString(session, "host", host);
+        Py_DECREF(host);
 
         id = Py_BuildValue("l", ut->ut_id);
         PyDict_SetItemString(session, "id", id);
+        Py_DECREF(id);
 
         line = PyUnicode_FromString(ut->ut_line);
         PyDict_SetItemString(session, "line", line);
+        Py_DECREF(line);
 
         PyList_Append(sessions, session);
+        Py_DECREF(session);
     }
 
     endutxent();
@@ -82,6 +92,9 @@ static PyObject * get_lastlogin(PyObject * mos, PyObject * args)
     PyObject * timestamp = Py_BuildValue("f", ts_unix);
     PyObject * ts_args = Py_BuildValue("(O)", timestamp);
     PyObject * date = PyDateTime_FromTimestamp(ts_args);
+    Py_DECREF(timestamp);
+    Py_DECREF(ts_args);
+    free(llog);
 
     endutxent();
 
