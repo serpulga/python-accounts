@@ -17,6 +17,6 @@ setup(
     packages=['accounts', 'accounts.tests'],
     package_dir={'accounts': 'lib', 'accounts.tests': 'tests'},
     version='0.0.1',
-    description='Pycon Medellin 2018!',
+    description='',
     ext_modules=[module]
 )
